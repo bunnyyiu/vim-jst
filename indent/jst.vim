@@ -13,6 +13,10 @@ else
 endif
 unlet! b:did_indent
 
+if !exists("g:indent_jst_block")
+  let g:indent_jst_block = 0
+endif
+
 if &l:indentexpr == ''
   if &l:cindent
     let &l:indentexpr = 'cindent(v:lnum)'
@@ -59,8 +63,10 @@ function! GetJstIndent(...)
   if line =~# '\%({\|\<do\)\%(\s*|[^|]*|\)\=\s*[-=]\=%>'
     let ind = ind + &sw
   endif
-  if line =~# '^\s*<%[=#-]\=\s*$' && cline !~# '^\s*end\>'
-    let ind = ind + &sw
+  if g:indent_jst_block == 1
+    if line =~# '^\s*<%[=#-]\=\s*$' && cline !~# '^\s*end\>'
+      let ind = ind + &sw
+    endif
   endif
   if line !~# '^\s*<%' && line =~# '%>\s*$'
     let ind = ind - &sw
